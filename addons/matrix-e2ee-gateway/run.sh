@@ -3,7 +3,7 @@ set -euo pipefail
 
 CONFIG_FILE="${CONFIG_FILE:-/data/options.json}"
 
-python3 - <<'PY' "$CONFIG_FILE"
+exec python3 - <<'PY' "$CONFIG_FILE"
 import json
 import os
 import pathlib
@@ -64,6 +64,6 @@ except OSError:
     fallback_path = "/tmp/matrix-chat-store"
     pathlib.Path(fallback_path).mkdir(parents=True, exist_ok=True)
     os.environ["MATRIX_STORE_PATH"] = fallback_path
-PY
 
-exec python /app/gateway.py
+os.execv(sys.executable, [sys.executable, "/app/gateway.py"])
+PY
